@@ -12,6 +12,7 @@ const userReduser = (state = initialState, action: UserAction) => {
   switch (action.type) {
     case types.REGISTER_START:
     case types.LOGIN_START:
+    case types.LOGOUT_START:
       return {
         ...state,
         loading: true,
@@ -21,6 +22,12 @@ const userReduser = (state = initialState, action: UserAction) => {
       return {
         loading: false,
         currentUser: action.payload,
+        error: null,
+      }
+    case types.LOGOUT_SUCCESS:
+      return {
+        loading: false,
+        currentUser: null,
         error: null,
       }
     case types.REGISTER_FAILURE:

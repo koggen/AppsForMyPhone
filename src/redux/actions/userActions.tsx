@@ -33,6 +33,19 @@ const loginFailure = (error: string | null): UserAction => ({
   payload: error,
 });
 
+const logoutStart = (): UserAction => ({
+  type: types.LOGOUT_START,
+});
+
+const logoutSuccess = (): UserAction => ({
+  type: types.LOGOUT_SUCCESS,
+});
+
+const logoutFailure = (error: string | null): UserAction => ({
+  type: types.LOGOUT_FAILURE,
+  payload: error,
+});
+
 export const register = ({displayName, email, password} : RegisterData): ThunkAction<void, RootState, null, UserAction> => {
   return async dispach => {
     dispach(registerStart());
@@ -73,6 +86,19 @@ export const login = ({email, password} : LoginData): ThunkAction<void, RootStat
     }
     catch(error) {
       dispach(loginFailure((error as Error).message));
+    }
+  }
+}
+
+export const logout = (): ThunkAction<void, RootState, null, UserAction> => {
+  return async dispach => {
+    dispach(logoutStart());
+    try {
+      await auth.signOut();
+      dispach(logoutSuccess());
+    }
+    catch(error) {
+      dispach(logoutFailure((error as Error).message));
     }
   }
 }
