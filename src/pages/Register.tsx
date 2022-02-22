@@ -1,7 +1,9 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
@@ -9,17 +11,38 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { register } from '../redux/actions/userActions';
+import { RootState } from '../redux/rootReducer';
 
 const Register: React.FC = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const [registerData, setRegisterData] = useState({
+    displayName: "",
+    email: "",
+    password: ""
+  });
+
+  const { displayName, email, password } = registerData;
+
+  const { currentUser, loading } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(currentUser) {
+      navigate("/");
+    }
+  }, [ currentUser, navigate ])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRegisterData({...registerData, [e.target.name] : e.target.value})
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(register(registerData));
+    setRegisterData({ email: "", password: "", displayName: "" });
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -47,6 +70,8 @@ const Register: React.FC = () => {
                 id="fullName"
                 label="Full Name"
                 autoFocus
+                value={displayName}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -56,6 +81,8 @@ const Register: React.FC = () => {
                 id="email"
                 label="Email Address"
                 name="email"
+                value={email}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -66,27 +93,20 @@ const Register: React.FC = () => {
                 label="Password"
                 type="password"
                 id="password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="passwordConfirm"
-                label="Confirm Password"
-                type="password"
-                id="passwordConfirm"
+                value={password}
+                onChange={handleChange}
               />
             </Grid>
           </Grid>
-          <Button
+          <LoadingButton
+            loading={loading ? true : false}
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign Up
-          </Button>
+          </LoadingButton>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link component={RouterLink} to="/login" variant="body2">

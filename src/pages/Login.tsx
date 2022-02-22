@@ -1,7 +1,9 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
@@ -9,17 +11,37 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { login } from '../redux/actions/userActions';
+import { RootState } from '../redux/rootReducer';
 
 const Login: React.FC = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = loginData;
+
+  const { currentUser, loading } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(currentUser) {
+      navigate("/");
+    }
+  }, [ currentUser, navigate ])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginData({...loginData, [e.target.name] : e.target.value})
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(login(loginData));
+    setLoginData({ email: "", password: "" });
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -45,8 +67,9 @@ const Login: React.FC = () => {
             id="email"
             label="Email Address"
             name="email"
-            autoComplete="email"
             autoFocus
+            value={email}
+            onChange={handleChange}
           />
           <TextField
             margin="normal"
@@ -56,16 +79,18 @@ const Login: React.FC = () => {
             label="Password"
             type="password"
             id="password"
-            autoComplete="current-password"
+            value={password}
+            onChange={handleChange}
           />
-          <Button
+          <LoadingButton
+            loading={loading ? true : false}
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
             Sign In
-          </Button>
+          </LoadingButton>
           <Grid container>
             <Grid item xs>
               {/* <Link href="#" variant="body2">
