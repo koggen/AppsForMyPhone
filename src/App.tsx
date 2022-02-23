@@ -1,13 +1,21 @@
-import React from 'react';
-import Navbar from './components/Navbar';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CssBaseline from '@mui/material/CssBaseline';
+import { verifyAuth } from './redux/actions/userActions';
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(verifyAuth());
+  }, [ dispatch ]);
+
   return (
     <BrowserRouter>
       <CssBaseline />

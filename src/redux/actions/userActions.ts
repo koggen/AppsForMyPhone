@@ -4,6 +4,7 @@ import { UserAction } from "../../types/actionTypes";
 import { User, RegisterData, LoginData } from "../../types/userTypes";
 import { auth } from "../../services/firebase";
 import { RootState } from "../rootReducer";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const registerStart = (): UserAction => ({
   type: types.REGISTER_START,
@@ -46,9 +47,14 @@ const logoutFailure = (error: string | null): UserAction => ({
   payload: error,
 });
 
+const setUser = (user: User | null): UserAction => ({
+  type: types.SET_USER,
+  payload: user,
+});
+
 export const register = ({displayName, email, password} : RegisterData): ThunkAction<void, RootState, null, UserAction> => {
-  return async dispach => {
-    dispach(registerStart());
+  return async dispatch => {
+    dispatch(registerStart());
     try {
       const res = await auth.createUserWithEmailAndPassword(email, password);
       if(res.user) {
@@ -60,19 +66,19 @@ export const register = ({displayName, email, password} : RegisterData): ThunkAc
           displayName: displayName,
           email: email
         };
-        dispach(registerSuccess(user));
+        dispatch(registerSuccess(user));
       }
 
     }
     catch(error) {
-      dispach(registerFailure((error as Error).message));
+      dispatch(registerFailure((error as Error).message));
     }
   }
 }
 
 export const login = ({email, password} : LoginData): ThunkAction<void, RootState, null, UserAction> => {
-  return async dispach => {
-    dispach(loginStart());
+  return async dispatch => {
+    dispatch(loginStart());
     try {
       const res = await auth.signInWithEmailAndPassword(email, password)
       if(res.user) {
@@ -81,24 +87,47 @@ export const login = ({email, password} : LoginData): ThunkAction<void, RootStat
           displayName: res.user.displayName,
           email: email
         };
-        dispach(loginSuccess(user));
+        dispatch(loginSuccess(user));
       }
     }
     catch(error) {
-      dispach(loginFailure((error as Error).message));
+      dispatch(loginFailure((error as Error).message));
     }
   }
 }
 
 export const logout = (): ThunkAction<void, RootState, null, UserAction> => {
-  return async dispach => {
-    dispach(logoutStart());
+  return async dispatch => {
+    dispatch(logoutStart());
     try {
       await auth.signOut();
-      dispach(logoutSuccess());
+      dispatch(logoutSuccess());
     }
     catch(error) {
-      dispach(logoutFailure((error as Error).message));
+      dispatch(logoutFailure((error as Error).message));
+    }
+  }
+}
+
+export const verifyAuth = (): ThunkAction<void, RootState, null, UserAction> => {
+  return async dispatch => {
+    try {
+      await onAuthStateChanged(getAuth(), (authUser) => {
+        if(authUser) {
+          console.log(authUser)
+          const user: User = {
+            id: authUser.uid,
+            displayName: authUser.displayName,
+            email: authUser.email
+          };
+          dispatch(setUser(user));
+        } else {
+          dispatch(setUser(null));
+        }
+      });
+    }
+    catch(error) {
+      dispatch(setUser(null));
     }
   }
 }

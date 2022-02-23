@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   displayName: string | null;
-  email: string;
+  email: string | null;
 }
 
 export interface AuthState {
