@@ -1,6 +1,6 @@
 import { ThunkAction } from "redux-thunk";
-import * as types from "../../types/actionTypes";
-import { UserAction } from "../../types/actionTypes";
+import * as types from "../../types/userActionTypes";
+import { UserAction } from "../../types/userActionTypes";
 import { User, RegisterData, LoginData } from "../../types/userTypes";
 import { auth } from "../../services/firebase";
 import { RootState } from "../rootReducer";

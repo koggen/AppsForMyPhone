@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AddApp from './pages/AddApp';
 import CssBaseline from '@mui/material/CssBaseline';
 import { verifyAuth } from './redux/actions/userActions';
 import './App.css';
@@ -24,7 +25,8 @@ const App: React.FC = () => {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register  />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/add-app' element={<AddApp />} />
           </Routes>
       </div>
     </BrowserRouter>

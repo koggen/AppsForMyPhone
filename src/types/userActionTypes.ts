@@ -60,4 +60,4 @@ interface setUser {
   payload: User | null;
 }
 
-export type UserAction = registerStart | registerSuccess | registerFailure | loginStart | loginSuccess | loginFailure | logoutStart | logoutSuccess | logoutFailure | setUser
+export type UserAction = registerStart | registerSuccess | registerFailure | loginStart | loginSuccess | loginFailure | logoutStart | logoutSuccess | logoutFailure | setUser;
