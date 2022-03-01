@@ -6,5 +6,6 @@ export interface App {
 }
 
 export interface AppsState {
+  apps: Array<object>;
   app: App;
 }
