@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -28,7 +29,9 @@ const Home: React.FC = () => {
         {apps.map((item: any) => (
           <Grid item xs={2} sm={3} md={3} key={item.id}>
             <Paper key={item.id}>
-              <img src={item.logoUrl} alt={item.appName}></img>
+              <RouterLink to={`/${item.id}`}>
+                <img src={item.logoUrl} alt={item.appName}></img>
+              </RouterLink>
               <Typography variant="subtitle1" component="h2">
                 {item.appName}
               </Typography>

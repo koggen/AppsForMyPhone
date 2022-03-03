@@ -23,6 +23,11 @@ const appsReduser = (state = initialState, action: AppsAction) => {
       return {
         ...state,
       }
+    case types.VIEW_APP:
+      return {
+        ...state,
+        app: action.payload,
+      }
     default: 
       return state;
   }

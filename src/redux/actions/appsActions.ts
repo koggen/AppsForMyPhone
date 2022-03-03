@@ -14,6 +14,11 @@ const appAdded = (): AppsAction => ({
   type: types.ADD_APP,
 });
 
+const appLoaded = (app: App): AppsAction => ({
+  type: types.VIEW_APP,
+  payload: app,
+});
+
 export const loadAllApps = (): ThunkAction<void, RootState, null, AppsAction> => {
   return async dispatch => {
     try {
@@ -51,6 +56,29 @@ export const addApp = (appData : App): ThunkAction<void, RootState, null, AppsAc
           dispatch(appAdded());
         }
       });
+    }
+    catch(error) {
+      console.log(error);
+    }
+  }
+}
+
+export const viewApp = (id: string | undefined): ThunkAction<void, RootState, null, AppsAction> => {
+  return async dispatch => {
+    try {
+      const snapshot = await db.child(`apps/${id}`).get();
+      if(snapshot.exists()) {
+        const data = snapshot.val();
+        const app = {
+          appName: data.appName,
+          logoUrl: data.logoUrl,
+          category: data.category,
+          appDescription: data.appDescription,
+        }
+        dispatch(appLoaded(app));
+      } else {
+        
+      }
     }
     catch(error) {
       console.log(error);
